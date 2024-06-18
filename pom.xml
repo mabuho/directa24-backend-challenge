@@ -8,13 +8,19 @@
 		<version>3.2.6</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
+
 	<groupId>com.directa24</groupId>
 	<artifactId>directa24-challenge</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>directa24-challenge</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Directa24 Backend Dev Code Challenge</description>
+
 	<properties>
 		<java.version>17</java.version>
+		<!-- SonarQube exclusions for code coverage metrics  -->
+		<sonar.exclusions>
+			src/main/java/com/directa24/challenge/config/**,src/main/java/com/directa24/challenge/exception/**,src/main/java/com/directa24/challenge/model/**,src/main/java/com/directa24/challenge/utils/**,src/main/test/**/*
+		</sonar.exclusions>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -41,11 +47,6 @@
 			<version>6.1.5</version>
 		</dependency>
 
-		<!-- <dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-redis</artifactId>
-			<version>3.2.3</version>
-		</dependency> -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
