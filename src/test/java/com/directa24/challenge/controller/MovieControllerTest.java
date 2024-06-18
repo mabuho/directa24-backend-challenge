@@ -1,7 +1,5 @@
 package com.directa24.challenge.controller;
 
-import com.directa24.challenge.exception.MovieException;
-import com.directa24.challenge.model.DirectorName;
 import com.directa24.challenge.service.MovieService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +10,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 import static com.directa24.challenge.utils.Contants.*;
+import static com.directa24.challenge.utils.Mocks.mockDirectorName;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -53,8 +51,14 @@ public class MovieControllerTest {
             )
                 .andDo( print() )
                 .andExpect( status().isOk() )
-                .andExpect( jsonPath("$.directors").exists() )
-                .andExpect( jsonPath("$.directors[*]").isNotEmpty() );
+                .andExpect( jsonPath("$.status" ).doesNotExist() )
+                .andExpect( jsonPath("$.message" ).doesNotExist() )
+                .andExpect( jsonPath("$.cause" ).doesNotExist() )
+                .andExpect( jsonPath("$.stackTrace" ).doesNotExist() )
+                .andExpect( jsonPath("$.suppressed" ).doesNotExist() )
+                .andExpect( jsonPath("$.localizedMessage" ).doesNotExist() )
+                .andExpect( jsonPath("$.directors" ).exists() )
+                .andExpect( jsonPath("$.directors[*]" ).isNotEmpty() );
 
     }
 
@@ -72,11 +76,15 @@ public class MovieControllerTest {
             )
                 .andDo( print() )
                 .andExpect( status().isNotFound() )
-                .andExpect( jsonPath("$.directors").doesNotExist() )
-                .andExpect( jsonPath("$.status").exists() )
+                .andExpect( jsonPath("$.directors" ).doesNotExist() )
+                .andExpect( jsonPath("$.cause" ).doesNotExist() )
+                .andExpect( jsonPath("$.stackTrace" ).doesNotExist() )
+                .andExpect( jsonPath("$.suppressed" ).doesNotExist() )
+                .andExpect( jsonPath("$.localizedMessage" ).doesNotExist() )
+                .andExpect( jsonPath("$.status" ).exists() )
                 .andExpect( jsonPath("$.status" ).value(HttpStatus.NOT_FOUND.name()) )
-                .andExpect( jsonPath("$.message").exists() )
-                .andExpect(jsonPath("$.message")
+                .andExpect( jsonPath("$.message" ).exists() )
+                .andExpect(jsonPath("$.message" )
                     .value(String.format(DIRECTORS_NOT_FOUND, THRESHOLD)));
 
     }
@@ -91,11 +99,15 @@ public class MovieControllerTest {
             )
                 .andDo( print() )
                 .andExpect( status().isNotFound() )
-                .andExpect( jsonPath("$.directors").doesNotExist() )
+                .andExpect( jsonPath("$.directors" ).doesNotExist() )
+                .andExpect( jsonPath("$.cause" ).doesNotExist() )
+                .andExpect( jsonPath("$.stackTrace" ).doesNotExist() )
+                .andExpect( jsonPath("$.suppressed" ).doesNotExist() )
+                .andExpect( jsonPath("$.localizedMessage" ).doesNotExist() )
                 .andExpect( jsonPath("$.status").exists() )
                 .andExpect( jsonPath("$.status" ).value(HttpStatus.NOT_FOUND.name()) )
-                .andExpect( jsonPath("$.message").exists() )
-                .andExpect(jsonPath("$.message").value(RESOURCE_NOT_FOUND));
+                .andExpect( jsonPath("$.message" ).exists() )
+                .andExpect( jsonPath("$.message" ).value(RESOURCE_NOT_FOUND));
     }
 
     @Test
@@ -103,23 +115,21 @@ public class MovieControllerTest {
 
         mockMvc.perform(
                 MockMvcRequestBuilders
-                        .get(DIRECTORS_PATH + "?")
+                        .get(DIRECTORS_PATH)
                         .param("wrongQueryParam", String.valueOf(THRESHOLD))
                         .accept(MediaType.APPLICATION_JSON)
             )
                 .andDo( print() )
-                .andExpect( status().isNotFound() )
-                .andExpect( jsonPath("$.directors").doesNotExist() )
-                .andExpect( jsonPath("$.status").exists() )
-                .andExpect( jsonPath("$.status" ).value(HttpStatus.NOT_FOUND.name()) )
-                .andExpect( jsonPath("$.message").exists() )
-                .andExpect(jsonPath("$.message").value(RESOURCE_NOT_FOUND));
-    }
-
-    private Optional<DirectorName> mockDirectorName() {
-        return Optional.of( DirectorName.builder()
-                .names( Arrays.asList("Mock Name 1", "Mock Name 2") )
-                .build() );
+                .andExpect( status().isBadRequest())
+                .andExpect( jsonPath("$.directors" ).doesNotExist() )
+                .andExpect( jsonPath("$.cause" ).doesNotExist() )
+                .andExpect( jsonPath("$.stackTrace" ).doesNotExist() )
+                .andExpect( jsonPath("$.suppressed" ).doesNotExist() )
+                .andExpect( jsonPath("$.localizedMessage" ).doesNotExist() )
+                .andExpect( jsonPath("$.status" ).exists() )
+                .andExpect( jsonPath("$.status" ).value(HttpStatus.BAD_REQUEST.name()) )
+                .andExpect( jsonPath("$.message" ).exists() )
+                .andExpect( jsonPath("$.message" ).value(WRONG_REQUEST_PARAMETER));
     }
 
 }
