@@ -37,29 +37,28 @@ public class MovieApiComponent {
     private List<Movie> movies;
 
     public void fetchMoviesFromApi(int page) throws Exception {
-        log.debug("Current page: {}", page);
-        movies = new ArrayList<>();
+        log.info("Current page: [ {} ]", page);
         String url = movieProps.getProperties("url", MOVIES_URL);
         UriComponentsBuilder uriBuilder =
                 UriComponentsBuilder.fromUriString(url);
         uriBuilder.queryParam("page", page);
-        log.debug("Calling Movies API: {}", uriBuilder.toUriString());
+        log.debug("Calling Movies API: [ {} ]", uriBuilder.toUriString());
 
         Map<String, ResponseEntity> responseMap = new HashMap<>();
         // I used a retryTemplate because I was getting the following exception:
         // org.springframework.web.client.HttpClientErrorException$TooManyRequests:: 429 Too Many Requests: "Rate limit exceeded"
         // and
-        // org.springframework.web.client.HttpClientErrorException$TooManyRequests:: 404 Not Found: "{<EOL>  "errors" : [ "Monthly request quota has been exceeded. Visit https://app.wiremock.cloud/account/subscriptions to upgrade." ]<EOL>}"
+        // org.springframework.web.client.HttpClientErrorException$NotFound:: 404 Not Found: "{<EOL>  "errors" : [ "Monthly request quota has been exceeded. Visit https://app.wiremock.cloud/account/subscriptions to upgrade." ]<EOL>}"
         retryTemplate.execute( ctx -> {
-            log.debug("Inside retryTemplate.... ");
+            log.info("Inside retryTemplate.... ");
             ResponseEntity<MovieResponsePage<Movie>> moviePage;
+            log.info("RetryCount: [ {} ]", ctx.getRetryCount());
             try {
                 moviePage = movieRestTemplate.exchange(
                         uriBuilder.toUriString(),
                         HttpMethod.GET,
                         null,
-                        new ParameterizedTypeReference<>() {
-                        }
+                        new ParameterizedTypeReference<>() {}
                 );
             } catch (HttpClientErrorException.NotFound e) {
                 log.error("Exception: {}", e.getMessage());
@@ -75,13 +74,12 @@ public class MovieApiComponent {
 
         if ( !moviePage.getBody().getContent().isEmpty() ) {
             int size = moviePage.getBody().getContent().size();
-            log.debug("Adding {} new elements to the list", size);
-            List<Movie> ms = moviePage.getBody().getContent();
-            movies.addAll( ms );
+            log.info("Adding {} new elements to the list", size);
+            addMovies( moviePage.getBody().getContent() );
         }
 
         if( !moviePage.getBody().hasNext() ) {
-            log.debug("There are no more pages to fetch data...");
+            log.info("There are no more pages to fetch data...");
             return;
         }
 
@@ -91,6 +89,12 @@ public class MovieApiComponent {
         fetchMoviesFromApi(page);
     }
 
+    private void addMovies(List<Movie> movies) {
+        if(this.movies == null) {
+            this.movies = new ArrayList<>();
+        }
+        this.movies.addAll(movies);
+    }
 }
 
 
