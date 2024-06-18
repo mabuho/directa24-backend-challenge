@@ -6,10 +6,12 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
+
+import static com.directa24.challenge.utils.Contants.RESOURCE_NOT_FOUND;
+import static com.directa24.challenge.utils.Contants.WRONG_REQUEST_PARAMETER;
 
 @ControllerAdvice
 public class MovieApiExceptionHandler extends ResponseEntityExceptionHandler {
@@ -21,8 +23,12 @@ public class MovieApiExceptionHandler extends ResponseEntityExceptionHandler {
             HttpStatusCode status,
             WebRequest request
     ) {
-        String error = "The resource you're trying to reach does not exist.";
-        return buildResponseEntity(new MovieException(HttpStatus.NOT_FOUND, error));
+
+
+        return buildResponseEntity( MovieException.builder()
+                .status(HttpStatus.NOT_FOUND)
+                .message(RESOURCE_NOT_FOUND)
+                .build() );
     }
 
     @Override
@@ -31,13 +37,11 @@ public class MovieApiExceptionHandler extends ResponseEntityExceptionHandler {
             HttpHeaders headers,
             HttpStatusCode status,
             WebRequest request) {
-        String path = ((ServletWebRequest) request).toString();
-        path = path.substring(path.indexOf("uri") + "uri=".length(), path.indexOf(";")-1);
-        String error = "";
-        if ( !path.contains("?threshold=")) {
-            error = "The path does not contains the proper request parameter.";
-        }
-        return buildResponseEntity(new MovieException(HttpStatus.BAD_REQUEST, error));
+
+        return buildResponseEntity(MovieException.builder()
+                .status(HttpStatus.BAD_REQUEST)
+                .message(WRONG_REQUEST_PARAMETER)
+                .build() );
     }
 
     private ResponseEntity<Object> buildResponseEntity(MovieException apiError) {

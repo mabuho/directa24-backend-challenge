@@ -1,14 +1,16 @@
 package com.directa24.challenge.exception;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 
 @Slf4j
-@ToString
 @Getter
+@Builder
+@ToString
 @JsonIgnoreProperties(value = { "cause", "stackTrace", "suppressed", "localizedMessage" })
 public class MovieException extends Exception {
 

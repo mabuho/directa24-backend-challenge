@@ -3,7 +3,7 @@ package com.directa24.challenge.controller;
 import static com.directa24.challenge.utils.Contants.DIRECTORS_NOT_FOUND;
 
 import com.directa24.challenge.exception.MovieException;
-import com.directa24.challenge.model.Director;
+import com.directa24.challenge.model.DirectorName;
 import com.directa24.challenge.service.MovieService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,15 +26,15 @@ public class MovieController implements IMovieController {
     public ResponseEntity<?> getDirectorsByThreshold(int threshold) {
         log.debug("Threshold: {}", threshold);
 
-        Optional<Director> directors;
+        Optional<DirectorName> names;
         try {
-            directors = service.getDirectorNamesFilteredByThreshold(threshold);
+            names = service.getDirectorNamesFilteredByThreshold(threshold);
         } catch (Exception e) {
             MovieException error = MovieException.parseException( e );
             return ResponseEntity.status(error.getStatus()).body(error);
         }
 
-        if( !directors.isPresent() ) {
+        if( !names.isPresent() ) {
             log.info(String.format(DIRECTORS_NOT_FOUND, threshold));
             MovieException error = new MovieException(
                     HttpStatus.NOT_FOUND,
@@ -42,9 +42,9 @@ public class MovieController implements IMovieController {
             return ResponseEntity.status(error.getStatus()).body(error);
         }
 
-        log.info("There are [ {} ] directors found.", directors.get().getNames().size());
-        directors.get().getNames().forEach(log::info);
-        return ResponseEntity.ok(directors.get());
+        log.info("There are [ {} ] names found.", names.get().getNames().size());
+        names.get().getNames().forEach(log::info);
+        return ResponseEntity.ok(names.get());
     }
 
 }

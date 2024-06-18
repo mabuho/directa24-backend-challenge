@@ -1,6 +1,6 @@
 package com.directa24.challenge.service;
 
-import com.directa24.challenge.model.Director;
+import com.directa24.challenge.model.DirectorName;
 import com.directa24.challenge.model.Movie;
 
 import java.util.List;
@@ -10,6 +10,6 @@ public interface IMovieService {
 
     List<Movie> getAllMovies() throws Exception;
 
-    Optional<Director> getDirectorNamesFilteredByThreshold(final int threshold) throws Exception;
+    Optional<DirectorName> getDirectorNamesFilteredByThreshold(final int threshold) throws Exception;
 
 }

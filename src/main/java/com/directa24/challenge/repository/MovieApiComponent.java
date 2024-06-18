@@ -28,7 +28,7 @@ import java.util.Map;
 @Getter
 @Component
 @RequiredArgsConstructor
-public class MovieApi {
+public class MovieApiComponent {
 
     private final RetryTemplate retryTemplate;
     private final MovieProperties movieProps;

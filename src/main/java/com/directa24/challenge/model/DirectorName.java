@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @Builder
-public class Director {
+public class DirectorName {
 
     @JsonProperty("directors")
     private List<String> names;
