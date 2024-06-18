@@ -23,7 +23,7 @@ public class MovieController implements IMovieController {
     private final MovieService service;
 
     @Override
-    public ResponseEntity<?> getDirectorsByThreshold(int threshold) {
+    public ResponseEntity<?> getMovieDirectorsByThreshold(int threshold) {
         log.debug("Threshold: {}", threshold);
 
         Optional<DirectorName> names;

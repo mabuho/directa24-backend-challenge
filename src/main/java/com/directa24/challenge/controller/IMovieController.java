@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface IMovieController {
 
     @GetMapping
-    ResponseEntity<?> getDirectorsByThreshold(@RequestParam(value = "threshold") int threshold) throws Exception;
+    ResponseEntity<?> getMovieDirectorsByThreshold(@RequestParam(value = "threshold") int threshold) throws Exception;
 
 }
