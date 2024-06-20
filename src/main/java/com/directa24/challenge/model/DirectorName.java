@@ -5,12 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
 public class DirectorName {
 
     @JsonProperty("directors")
-    private List<String> names;
+    private Set<String> names;
 
 }
