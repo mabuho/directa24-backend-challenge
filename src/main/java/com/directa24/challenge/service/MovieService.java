@@ -1,6 +1,7 @@
 package com.directa24.challenge.service;
 
 import static com.directa24.challenge.utils.Contants.INIT_SEARCH_PAGE;
+import static java.util.stream.Collectors.*;
 
 import com.directa24.challenge.config.MovieProperties;
 import com.directa24.challenge.model.DirectorName;
@@ -11,7 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -24,19 +27,20 @@ public class MovieService implements IMovieService {
     @Override
     public Optional<DirectorName> getDirectorNamesFilteredByThreshold(final int threshold) throws Exception {
         log.debug("Inside getDirectorNamesFilteredByThreshold method...");
-        List<Movie> movies = getAllMovies();
 
-        List<String> names = movies.stream()
-                .collect(Collectors.groupingBy(o -> o.getDirector()))
-                .entrySet().stream()
-                    .filter(m -> m.getValue().size() > threshold)
-                    .map(m -> m.getKey())
-                    .sorted()
-                    .collect(Collectors.toList());
+        Set<String> names = getAllMovies().stream()
+                .map(Movie::getDirector)
+                .collect(collectingAndThen(
+                        groupingBy(Function.identity(), HashMap::new, counting()),
+                        map -> {
+                            map.values().removeIf(ctr -> ctr <= threshold);
+                            return map.keySet();
+                        })
+                );
 
         return names.isEmpty()
-                    ? Optional.empty()
-                    : Optional.of( DirectorName.builder().names( names ).build() );
+                ? Optional.empty()
+                : Optional.of( DirectorName.builder().names( names ).build() );
     }
 
     @Override

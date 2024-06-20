@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static com.directa24.challenge.utils.Contants.INIT_SEARCH_PAGE;
 import static com.directa24.challenge.utils.Mocks.mockMovieException;
@@ -50,7 +51,7 @@ public class MovieServiceTest {
                 movieService.getDirectorNamesFilteredByThreshold( 1 );
 
         assertTrue(directorNames.isPresent(), "The optional object is null.");
-        List<String> names = directorNames.get().getNames();
+        Set<String> names = directorNames.get().getNames();
         assertFalse(names.isEmpty(), "The list of names is empty");
         assertEquals(2, names.size(), "The size of the response does not match");
 

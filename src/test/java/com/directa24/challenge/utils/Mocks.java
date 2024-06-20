@@ -9,16 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class Mocks {
 
     public static Optional<DirectorName> mockDirectorName() {
         return Optional.of( DirectorName.builder()
-                .names( Arrays.asList("Director1", "Director2") )
+                .names( Set.of("Director1", "Director2") )
                 .build() );
     }
 
